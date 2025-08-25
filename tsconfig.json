@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",            // نسخه JS خروجی
+    "module": "CommonJS",          // برای سازگاری با ts-node و nodemon
+    "rootDir": "./",                // ریشه سورس‌ها
+    "outDir": "./dist",             // خروجی کامپایل
+    "esModuleInterop": true,        // برای import پکیج‌های CommonJS
+    "strict": true,                 // چک سخت‌گیرانه TypeScript
+    "skipLibCheck": true            // بررسی type فایل‌های node_modules رو skip کن
+  },
+  "include": [
+    "server/**/*",
+    "db/**/*",
+    "client/**/*",
+    "index.ts"
+  ]
+}

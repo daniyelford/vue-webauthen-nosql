@@ -1,0 +1,125 @@
+// server/webauthnService.ts
+import {
+  generateRegistrationOptions,
+  verifyRegistrationResponse,
+  generateAuthenticationOptions,
+  verifyAuthenticationResponse,
+  VerifiedRegistrationResponse,
+  VerifiedAuthenticationResponse,
+} from '@simplewebauthn/server';
+import { User, Credential, Challenge } from '../db/types';
+import { getUserById, saveUser, saveChallenge, getChallenge, deleteChallenge } from '../db/mongoAdapter';
+
+const rpName = 'My-Home';
+const rpID = 'my-home.ir';
+const origin = 'https://www.my-home.ir';
+
+// --- REGISTRATION ---
+export async function createRegistrationOptions(userId: string) {
+  const user = await getUserById(userId);
+  if (!user) throw new Error('User not found');
+
+  const options = generateRegistrationOptions({
+    rpName,
+    rpID,
+    userID: user._id,
+    userName: user.username,
+    attestationType: 'indirect',
+    authenticatorSelection: {
+      userVerification: 'preferred',
+    },
+  });
+
+  await saveChallenge({
+    challenge: options.challenge,
+    user_id: userId,
+    type: 'registration',
+    createdAt: new Date(),
+  });
+
+  return options;
+}
+
+export async function verifyRegistration(userId: string, body: any) {
+  const challengeRecord = await getChallenge(body.response.clientDataJSON.challenge);
+  if (!challengeRecord) throw new Error('Challenge not found');
+
+  const user = await getUserById(userId);
+  if (!user) throw new Error('User not found');
+
+  const verification: VerifiedRegistrationResponse = await verifyRegistrationResponse({
+    credential: body, // جدید
+    expectedChallenge: challengeRecord.challenge,
+    expectedOrigin: origin,
+    expectedRPID: rpID,
+  });
+
+  if (verification.verified && verification.registrationInfo) {
+    const newCred: Credential = {
+      id: verification.registrationInfo.credentialID,
+      publicKey: verification.registrationInfo.credentialPublicKey,
+      counter: verification.registrationInfo.counter,
+      transports: [], // اختیاری
+    };
+    user.credentials.push(newCred);
+    await saveUser(user);
+    await deleteChallenge(challengeRecord.challenge);
+  }
+
+  return verification.verified;
+}
+
+// --- AUTHENTICATION ---
+export async function createAuthenticationOptions(userId?: string) {
+  const user = userId ? await getUserById(userId) : undefined;
+
+  const allowCredentials = user?.credentials.map(cred => ({
+    id: cred.id, // حتما Buffer یا ArrayBuffer باشه در types
+    type: 'public-key' as const,
+    transports: cred.transports,
+  }));
+
+  const options = generateAuthenticationOptions({
+    allowCredentials,
+    userVerification: 'preferred',
+    rpID,
+  });
+
+  await saveChallenge({
+    challenge: options.challenge,
+    user_id: userId || null,
+    type: 'authentication',
+    createdAt: new Date(),
+  });
+
+  return options;
+}
+
+export async function verifyAuthentication(body: any) {
+  const chal = await getChallenge(body.response.clientDataJSON.challenge);
+  if (!chal) return { verified: false, userId: null };
+
+  const user = chal.user_id ? await getUserById(chal.user_id) : null;
+  if (!user || !user.credentials.length) return { verified: false, userId: null };
+
+  const authenticator = user.credentials[0]; // همان credential موجود در DB
+  const verification: VerifiedAuthenticationResponse = await verifyAuthenticationResponse({
+    credential: body, // جدید
+    expectedChallenge: chal.challenge,
+    expectedOrigin: origin,
+    expectedRPID: rpID,
+    authenticator: {
+      credentialID: authenticator.id,
+      credentialPublicKey: authenticator.publicKey,
+      counter: authenticator.counter,
+      transports: authenticator.transports,
+    },
+  });
+
+  await deleteChallenge(chal.challenge);
+
+  return {
+    verified: verification.verified,
+    userId: verification.verified ? chal.user_id : null,
+  };
+}

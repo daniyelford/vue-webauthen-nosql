@@ -1,0 +1,21 @@
+<!-- client/App.vue -->
+<template>
+  <div id="app">
+    <h1>WebAuthn Client</h1>
+    <p>سلام! این یک اپ Vue 3 ساده است.</p>
+  </div>
+</template>
+
+<script lang="ts">
+export default {
+  name: 'App',
+};
+</script>
+
+<style scoped>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  text-align: center;
+  margin-top: 40px;
+}
+</style>
