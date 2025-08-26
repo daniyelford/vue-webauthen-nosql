@@ -1,17 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ES2020",            // نسخه JS خروجی
-    "module": "CommonJS",          // برای سازگاری با ts-node و nodemon
-    "rootDir": "./",                // ریشه سورس‌ها
-    "outDir": "./dist",             // خروجی کامپایل
-    "esModuleInterop": true,        // برای import پکیج‌های CommonJS
-    "strict": true,                 // چک سخت‌گیرانه TypeScript
-    "skipLibCheck": true            // بررسی type فایل‌های node_modules رو skip کن
+    "module": "NodeNext",
+    "target": "ES2020",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@db/*": ["db/*"],
+      "@server/*": ["server/*"]
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
-  "include": [
-    "server/**/*",
-    "db/**/*",
-    "client/**/*",
-    "index.ts"
-  ]
+  "include": ["server/**/*.ts"]
 }

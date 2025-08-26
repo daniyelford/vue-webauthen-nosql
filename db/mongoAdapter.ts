@@ -1,26 +1,10 @@
 // db/mongoAdapter.ts
-import { MongoClient } from 'mongodb';
+import { getDb } from './connection';
 import { User, Challenge } from './types';
-
-const uri = process.env.MONGO_URI || 'mongodb://localhost:27017';
-const dbName = 'webauthn';
-let dbClient: MongoClient;
-
-async function getDb() {
-  if (!dbClient) {
-    dbClient = new MongoClient(uri);
-    await dbClient.connect();
-  }
-  return dbClient.db(dbName);
-}
-
-// --- USER ---
 export async function getUserById(userId: string): Promise<User | null> {
   const db = await getDb();
-  const user = await db.collection<User>('users').findOne({ _id: userId });
-  return user;
+  return db.collection<User>('users').findOne({ _id: userId });
 }
-
 export async function saveUser(user: User) {
   const db = await getDb();
   await db.collection<User>('users').updateOne(
@@ -29,8 +13,6 @@ export async function saveUser(user: User) {
     { upsert: true }
   );
 }
-
-// --- CHALLENGE ---
 export async function saveChallenge(chal: Challenge) {
   const db = await getDb();
   await db.collection<Challenge>('challenges').updateOne(
@@ -42,7 +24,7 @@ export async function saveChallenge(chal: Challenge) {
 
 export async function getChallenge(challenge: string): Promise<Challenge | null> {
   const db = await getDb();
-  return await db.collection<Challenge>('challenges').findOne({ challenge });
+  return db.collection<Challenge>('challenges').findOne({ challenge });
 }
 
 export async function deleteChallenge(challenge: string) {

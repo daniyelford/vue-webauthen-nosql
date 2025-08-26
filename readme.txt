@@ -1,16 +1,15 @@
 vue-webauthen-nosql/
   ├── client/                  # سمت فرانت (Vue composables + JS helpers)
-  │   ├── useRegister.ts       # composable ثبت‌نام
-  │   ├── useLogin.ts          # composable ورود
-  │   └── api.ts               # فانکشن axios برای ارتباط
-  │   └── index.html              
-  │   └── vite.config.ts          
   │   └── .env
-  │
-  ├── server/                  # سمت بک‌اند (Node + Express)
-  │   ├── authRoutes.ts        # روت‌ها (login/register)
-  │   ├── webauthnService.ts   # متدهای مربوط به WebAuthn
-  │   └── index.ts             # setup express
+  │   └── api.ts               # فانکشن axios برای ارتباط
+  │   └── App.vue               
+  │   └── index.html              
+  │   └── main.ts
+  │   └── shims-vue.d.ts
+  │   └── tsconfig.json
+  │   ├── useLogin.ts          # composable ورود
+  │   ├── useRegister.ts       # composable ثبت‌نام
+  │   └── vite.config.ts          
   │
   ├── db/                      # ارتباط با NoSQL
   │   ├── mongoAdapter.ts      # آداپتر Mongo
@@ -23,6 +22,14 @@ vue-webauthen-nosql/
   │   └── vue-client/          # نمونه فرانت
   │       └── App.vue
   │
+  ├── server/                  # سمت بک‌اند (Node + Express)
+  │   ├── authRoutes.ts        # روت‌ها (login/register)
+  │   └── index.ts             # setup express
+  │   ├── webauthnService.ts   # متدهای مربوط به WebAuthn
+  │
+  └── .env
   ├── index.ts                 # entry point پکیج
   └── package.json
-  └── .env
+  └── tsconfig.json
+
+npx tsc

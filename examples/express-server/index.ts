@@ -1,18 +1,21 @@
 import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import authRoutes from '../../server/authRoutes';
-import { connectDB } from '../../db/mongoAdapter';
+// import cors from 'cors';
+// import bodyParser from 'body-parser';
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-app.use('/webauthn', authRoutes);
+// app.use(cors());
+// app.use(bodyParser.json());
 
-const PORT = 3000;
+async function startServer() {
+  // const authModule = await import('../../server/authRoutes.js');
+  // const authRoutes = authModule.default as unknown as Router;
 
-connectDB()
-  .then(() => {
-    app.listen(PORT, () => console.log(`Example server running on http://localhost:${PORT}`));
-  })
-  .catch(err => console.error('Failed to connect DB', err));
+  const { connectDB } = await import('../../db/connection.js');
+
+  // app.use('/webauthn', authRoutes);
+
+  await connectDB();
+  app.listen(3000, () => console.log(`Server running on http://localhost:3000`));
+}
+
+startServer();
