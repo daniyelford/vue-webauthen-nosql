@@ -19,8 +19,11 @@ vue-webauthen-nosql/
   ├── examples/                # مثال آماده
   │   ├── express-server/      # نمونه بک‌اند
   │       └── index.ts
+  │       └── package.json
   │   └── vue-client/          # نمونه فرانت
   │       └── App.vue
+  │       └── package.json
+  │   ├── package.json
   │
   ├── server/                  # سمت بک‌اند (Node + Express)
   │   ├── authRoutes.ts        # روت‌ها (login/register)

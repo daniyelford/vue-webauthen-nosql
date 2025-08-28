@@ -1,0 +1,12 @@
+{
+  "name": "examples",
+  "private": true,
+  "scripts": {
+    "dev:server": "cd express-server && npm run dev",
+    "dev:client": "cd vue-client && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
