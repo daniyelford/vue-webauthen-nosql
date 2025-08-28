@@ -1,11 +1,11 @@
 // server/authRoutes.ts
 import { Router } from 'express';
+import { createRegistrationOptions,verifyRegistration,createAuthenticationOptions,verifyAuthentication } from './webauthnService'
 const router = Router();
  
 // Registration
 router.post('/register/options', async (req, res) => {
   try {
-    const { createRegistrationOptions } = await import('./webauthnService.js');
     const { userId } = req.body;
     const options = await createRegistrationOptions(userId);
     res.json(options);
@@ -16,7 +16,6 @@ router.post('/register/options', async (req, res) => {
 
 router.post('/register/verify', async (req, res) => {
   try {
-    const { verifyRegistration } = await import('./webauthnService.js');
     const { userId, body } = req.body;
     const verified = await verifyRegistration(userId, body);
     res.json({ verified });
@@ -28,7 +27,6 @@ router.post('/register/verify', async (req, res) => {
 // Authentication
 router.post('/login/options', async (req, res) => {
   try {
-    const { createAuthenticationOptions } = await import('./webauthnService.js');
     const { userId } = req.body; // optional
     const options = await createAuthenticationOptions(userId);
     res.json(options);
@@ -39,7 +37,6 @@ router.post('/login/options', async (req, res) => {
 
 router.post('/login/verify', async (req, res) => {
   try {
-    const { verifyAuthentication } = await import('./webauthnService.js');
     const { body } = req.body;
     const result = await verifyAuthentication(body);
     res.json(result);
