@@ -34,5 +34,3 @@ vue-webauthen-nosql/
   ├── index.ts                 # entry point پکیج
   └── package.json
   └── tsconfig.json
-
-npx tsc

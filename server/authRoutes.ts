@@ -1,8 +1,8 @@
-// server/authRoutes.ts
 import { Router } from 'express';
-import { createRegistrationOptions,verifyRegistration,createAuthenticationOptions,verifyAuthentication } from './webauthnService'
+import { createRegistrationOptions, verifyRegistration, createAuthenticationOptions, verifyAuthentication } from './webauthnService';
+
 const router = Router();
- 
+
 // Registration
 router.post('/register/options', async (req, res) => {
   try {
@@ -27,7 +27,7 @@ router.post('/register/verify', async (req, res) => {
 // Authentication
 router.post('/login/options', async (req, res) => {
   try {
-    const { userId } = req.body; // optional
+    const { userId } = req.body;
     const options = await createAuthenticationOptions(userId);
     res.json(options);
   } catch (err: any) {
@@ -37,8 +37,7 @@ router.post('/login/options', async (req, res) => {
 
 router.post('/login/verify', async (req, res) => {
   try {
-    const { body } = req.body;
-    const result = await verifyAuthentication(body);
+    const result = await verifyAuthentication(req.body);
     res.json(result);
   } catch (err: any) {
     res.status(400).json({ error: err.message });

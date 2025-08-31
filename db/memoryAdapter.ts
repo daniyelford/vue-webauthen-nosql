@@ -1,4 +1,3 @@
-// db/memoryAdapter.ts
 import { User, Challenge } from './types';
 
 const users: User[] = [];
